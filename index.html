@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Color Palette Generator</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui; background: #1a1a2e; min-height: 100vh; padding: 20px; color: white; }
+.container { max-width: 900px; margin: 0 auto; background: #16213e; border-radius: 20px; padding: 30px; }
+h1 { text-align: center; background: linear-gradient(90deg,#fee140,#fa709a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+input[type=text] { width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 18px; background: #0f3460; color: white; }
+button { background: linear-gradient(90deg,#fee140,#fa709a); color: white; border: none; padding: 15px 40px; border-radius: 30px; cursor: pointer; font-weight: bold; margin: 10px; }
+.palette { display: grid; grid-template-columns: repeat(5,1fr); gap: 0; border-radius: 15px; overflow: hidden; margin-top: 20px; }
+.color { aspect-ratio: 1; display: flex; align-items: flex-end; justify-content: center; padding: 15px; font-family: monospace; font-size: 0.8em; cursor: pointer; transition: flex 0.3s; }
+.color:hover { flex: 2; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎨 AI Color Palette</h1>
+<p style="text-align:center;color:#aaa">Type a mood → Get a perfect color palette</p>
+
+<input type="text" id="mood" placeholder="e.g., ocean sunset, tech startup, vintage...">
+<div style="text-align:center">
+<button onclick="generate()">✨ Generate Palette</button>
+<button onclick="random()">🎲 Random</button>
+</div>
+
+<div class="palette" id="palette"></div>
+
+<p style="text-align:center;margin-top:20px;color:#aaa">Click a color to copy its hex code</p>
+
+<div style="background:#0f3460;border-radius:10px;padding:15px;margin-top:20px;text-align:center">
+💼 Want export to Figma/Sketch/Adobe? <a href="https://buy.stripe.com/color-pro" style="color:#fee140">Pro $7/mo</a>
+</div>
+</div>
+
+<script>
+const palettes = {
+  'ocean': ['#03045e','#0077b6','#00b4d8','#90e0ef','#caf0f8'],
+  'sunset': ['#ff006e','#fb5607','#ffbe0b','#8338ec','#3a86ff'],
+  'forest': ['#1b4332','#2d6a4f','#52b788','#95d5b2','#d8f3dc'],
+  'tech': ['#0f0f0f','#1a1a2e','#16213e','#0f3460','#e94560'],
+  'pastel': ['#ffadad','#ffd6a5','#fdffb6','#caffbf','#9bf6ff'],
+  'vintage': ['#8d5524','#c68642','#e0ac69','#f1c27d','#ffdbac'],
+  'cyber': ['#ff00ff','#00ffff','#ff0080','#8000ff','#00ff80'],
+  'earth': ['#3d2c2e','#774c60','#b75d69','#eacdc2','#d9b094']
+};
+
+function generate() {
+  const mood = document.getElementById('mood').value.toLowerCase();
+  let colors;
+  for (const key in palettes) {
+    if (mood.includes(key)) { colors = palettes[key]; break; }
+  }
+  if (!colors) colors = palettes['tech'];
+  render(colors);
+}
+
+function random() {
+  const keys = Object.keys(palettes);
+  render(palettes[keys[Math.floor(Math.random() * keys.length)]]);
+}
+
+function render(colors) {
+  const palette = document.getElementById('palette');
+  palette.innerHTML = '';
+  colors.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'color';
+    div.style.background = c;
+    div.style.color = parseInt(c.slice(1),16) > 0x888888 ? '#000' : '#fff';
+    div.textContent = c;
+    div.onclick = () => {
+      navigator.clipboard.writeText(c);
+      alert('Copied: ' + c);
+    };
+    palette.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
